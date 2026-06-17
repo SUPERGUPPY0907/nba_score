@@ -108,25 +108,25 @@
     
 
     <text class="leader-cat" x="280" y="156" text-anchor="middle">PTS</text>
-    <text class="leader-name" x="124" y="156" text-anchor="end"></text>
-    <rect x="222" y="147" width="0" height="8" rx="2" fill="#FFC72C" opacity="0.42"/>
-    <text class="leader-value" x="244" y="156" text-anchor="end" fill="#FFC72C"></text>
+    <text class="leader-name" x="124" y="156" text-anchor="end">B. Podziemski</text>
+    <rect x="169" y="147" width="53" height="8" rx="2" fill="#FFC72C" opacity="0.42"/>
+    <text class="leader-value" x="244" y="156" text-anchor="end" fill="#FFC72C">23</text>
     <text class="leader-value" x="316" y="156" fill="#8A9099">36</text>
     <rect x="338" y="147" width="84" height="8" rx="2" fill="#8A9099" opacity="0.42"/>
     <text class="leader-name" x="436" y="156">J. Green</text>
     <text class="leader-cat" x="280" y="174" text-anchor="middle">AST</text>
-    <text class="leader-name" x="124" y="174" text-anchor="end"></text>
-    <rect x="222" y="165" width="0" height="8" rx="2" fill="#FFC72C" opacity="0.42"/>
-    <text class="leader-value" x="244" y="174" text-anchor="end" fill="#FFC72C"></text>
+    <text class="leader-name" x="124" y="174" text-anchor="end">D. Green</text>
+    <rect x="159" y="165" width="63" height="8" rx="2" fill="#FFC72C" opacity="0.42"/>
+    <text class="leader-value" x="244" y="174" text-anchor="end" fill="#FFC72C">6</text>
     <text class="leader-value" x="316" y="174" fill="#8A9099">8</text>
     <rect x="338" y="165" width="84" height="8" rx="2" fill="#8A9099" opacity="0.42"/>
     <text class="leader-name" x="436" y="174">D. Booker</text>
     <text class="leader-cat" x="280" y="192" text-anchor="middle">REB</text>
-    <text class="leader-name" x="124" y="192" text-anchor="end"></text>
-    <rect x="222" y="183" width="0" height="8" rx="2" fill="#FFC72C" opacity="0.42"/>
-    <text class="leader-value" x="244" y="192" text-anchor="end" fill="#FFC72C"></text>
+    <text class="leader-name" x="124" y="192" text-anchor="end">B. Podziemski</text>
+    <rect x="138" y="183" width="84" height="8" rx="2" fill="#FFC72C" opacity="0.42"/>
+    <text class="leader-value" x="244" y="192" text-anchor="end" fill="#FFC72C">10</text>
     <text class="leader-value" x="316" y="192" fill="#8A9099">9</text>
-    <rect x="338" y="183" width="84" height="8" rx="2" fill="#8A9099" opacity="0.42"/>
+    <rect x="338" y="183" width="75" height="8" rx="2" fill="#8A9099" opacity="0.42"/>
     <text class="leader-name" x="436" y="192">J. Goodwin</text>
     
     
