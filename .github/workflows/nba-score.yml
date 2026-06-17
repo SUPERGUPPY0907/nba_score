@@ -36,15 +36,30 @@ jobs:
           NBA_LAYOUT: ${{ vars.NBA_LAYOUT || 'full' }}
           BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
 
-      - name: Commit and push if changed
+      - name: Publish generated SVG
         run: |
+          set -e
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          mkdir -p /tmp/nba-card-output/output
+          cp output/nba-score.svg /tmp/nba-card-output/output/nba-score.svg
+
+          git fetch origin card-output || true
+          if git show-ref --verify --quiet refs/remotes/origin/card-output; then
+            git checkout -B card-output origin/card-output
+          else
+            git checkout --orphan card-output
+            git rm -rf . || true
+          fi
+
+          mkdir -p output
+          cp /tmp/nba-card-output/output/nba-score.svg output/nba-score.svg
           git add output/nba-score.svg
+
           if git diff --quiet --cached; then
-            echo "No changes to commit"
+            echo "No changes to publish"
           else
             git commit -m "Update NBA score card [skip ci]"
-            git pull --rebase origin main
-            git push
+            git push origin card-output
           fi
