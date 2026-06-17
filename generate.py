@@ -332,6 +332,20 @@ def fetch_latest_game(team_abbreviation):
 
 ESPN_API = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba"
 ESPN_HEADERS = {"User-Agent": "Mozilla/5.0"}
+ESPN_TO_NBA_ABBR = {
+    "GS": "GSW",
+    "NO": "NOP",
+    "NY": "NYK",
+    "SA": "SAS",
+    "UTAH": "UTA",
+    "WSH": "WAS",
+}
+
+
+def normalize_team_abbr(abbreviation):
+    """Normalize ESPN team abbreviations to the NBA/balldontlie form."""
+    abbr = str(abbreviation or "").upper()
+    return ESPN_TO_NBA_ABBR.get(abbr, abbr)
 
 
 def fetch_espn_event_id(game_date_str, home_abbr, away_abbr):
@@ -362,8 +376,8 @@ def fetch_espn_event_id(game_date_str, home_abbr, away_abbr):
         events = resp.json().get("events", [])
         for ev in events:
             comp = ev["competitions"][0]
-            teams_in_game = {c["team"]["abbreviation"].upper() for c in comp["competitors"]}
-            if home_abbr.upper() in teams_in_game or away_abbr.upper() in teams_in_game:
+            teams_in_game = {normalize_team_abbr(c["team"].get("abbreviation", "")) for c in comp["competitors"]}
+            if normalize_team_abbr(home_abbr) in teams_in_game or normalize_team_abbr(away_abbr) in teams_in_game:
                 return ev["id"]
     except Exception as e:
         print(f"[espn] Error finding event: {e}")
@@ -390,7 +404,7 @@ def fetch_player_leaders(event_id):
 
         result = {}
         for team_data in players_data:
-            team_abbr = team_data["team"]["abbreviation"].upper()
+            team_abbr = normalize_team_abbr(team_data["team"].get("abbreviation", ""))
             stats_group = team_data["statistics"][0]
             labels = stats_group["labels"]
 
