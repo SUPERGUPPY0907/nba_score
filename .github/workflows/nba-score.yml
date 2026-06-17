@@ -1,0 +1,41 @@
+name: Update NBA Score Card
+
+on:
+  schedule:
+    # GitHub Actions schedule supports a minimum interval of 5 minutes.
+    # balldontlie Free is 5 req/min; this job uses one balldontlie /games request.
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  update-card:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate NBA score card
+        run: python generate.py
+        env:
+          NBA_TEAM: ${{ vars.NBA_TEAM || 'LAL' }}
+          NBA_LAYOUT: ${{ vars.NBA_LAYOUT || 'full' }}
+          BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add output/nba-score.svg
+          git diff --quiet --cached || git commit -m "Update NBA score card [skip ci]"
+          git push

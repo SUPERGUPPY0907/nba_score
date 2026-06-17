@@ -1,0 +1,165 @@
+{%- set W = 380 -%}
+{%- set H = 280 -%}
+{%- set CX = W // 2 -%}
+{%- set LOGO_SIZE = H -%}
+<svg width="{{W}}" height="{{H}}" viewBox="0 0 {{W}} {{H}}" xmlns="http://www.w3.org/2000/svg" aria-labelledby="cardTitle" role="img">
+  <title id="cardTitle">NBA Latest Game Score{% if game %}: {{game.away_team.abbreviation}} {{game.away_team.score}} - {{game.home_team.score}} {{game.home_team.abbreviation}}{% endif %}</title>
+  <defs>
+    <style>
+      .txt{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif}
+      .title{font-size:12px;font-weight:700;letter-spacing:.5px;fill:#{{title_color}}}
+      .date{font-size:11px;fill:#8b949e}
+      .abbr{font-size:22px;font-weight:800;fill:#{{text_color}}}
+      .name{font-size:11px;fill:#8b949e}
+      .score{font-size:36px;font-weight:800;fill:#{{text_color}}}
+      .divider{font-size:28px;font-weight:300;fill:#484f58}
+      .badge{font-size:10px;font-weight:700;letter-spacing:.3px}
+      .grid{stroke:#30363d;stroke-width:1;vector-effect:non-scaling-stroke}
+      .qhead{font-size:8px;font-weight:800;fill:#8b949e}
+      .qcell{font-size:10px;font-weight:700;fill:#8b949e}
+      .qlabel{font-size:10px;font-weight:800;fill:#{{text_color}}}
+      .qtotal{font-size:10px;font-weight:800;fill:#{{text_color}}}
+      .leader-cat{font-size:8px;font-weight:800;letter-spacing:1px;fill:#8b949e}
+      .leader-name{font-size:9px;font-weight:700;fill:#8b949e}
+      .leader-value{font-size:10px;font-weight:800}
+      .footer{font-size:10px;fill:#484f58}
+      .accent{fill:#{{accent_color}}}
+      .win{fill:#3fb950}
+      .loss{fill:#f85149}
+      .empty{font-size:14px;fill:#8b949e}
+    </style>
+    <linearGradient id="awayLogoFade" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="{{CX}}" y2="0">
+      <stop offset="0%" stop-color="white" stop-opacity="0.28"/>
+      <stop offset="58%" stop-color="white" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="homeLogoFade" gradientUnits="userSpaceOnUse" x1="{{CX}}" y1="0" x2="{{W}}" y2="0">
+      <stop offset="0%" stop-color="white" stop-opacity="0"/>
+      <stop offset="42%" stop-color="white" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0.28"/>
+    </linearGradient>
+    <mask id="maskL" maskUnits="userSpaceOnUse" x="0" y="0" width="{{CX}}" height="{{H}}">
+      <rect x="0" y="0" width="{{CX}}" height="{{H}}" fill="url(#awayLogoFade)"/>
+    </mask>
+    <mask id="maskR" maskUnits="userSpaceOnUse" x="{{CX}}" y="0" width="{{CX}}" height="{{H}}">
+      <rect x="{{CX}}" y="0" width="{{CX}}" height="{{H}}" fill="url(#homeLogoFade)"/>
+    </mask>
+  </defs>
+  <rect width="{{W}}" height="{{H}}" rx="{{border_radius}}" fill="#{{background_color}}"/>
+  {% if game and away_logo %}
+  <image href="data:image/png;base64,{{away_logo}}" x="0" y="{{(H - LOGO_SIZE) // 2}}" width="{{LOGO_SIZE}}" height="{{LOGO_SIZE}}" mask="url(#maskL)" preserveAspectRatio="xMidYMid meet"/>
+  {% endif %}
+  {% if game and home_logo %}
+  <image href="data:image/png;base64,{{home_logo}}" x="{{W - LOGO_SIZE}}" y="{{(H - LOGO_SIZE) // 2}}" width="{{LOGO_SIZE}}" height="{{LOGO_SIZE}}" mask="url(#maskR)" preserveAspectRatio="xMidYMid meet"/>
+  {% endif %}
+
+  <g class="txt">
+    <circle cx="30" cy="26" r="10" fill="none" stroke="#{{accent_color}}" stroke-width="1.5"/>
+    <path d="M30 16C30 16 26 20 26 26C26 32 30 36 30 36" stroke="#{{accent_color}}" stroke-width="1.5" fill="none"/>
+    <path d="M30 16C30 16 34 20 34 26C34 32 30 36 30 36" stroke="#{{accent_color}}" stroke-width="1.5" fill="none"/>
+    <path d="M20 26H40" stroke="#{{accent_color}}" stroke-width="1.5"/>
+
+    {% if game %}
+    {% set q = game.quarters if game.quarters is defined and game.quarters else {} %}
+    {% set has_q = q | length > 0 %}
+    {% set show_ot = q.get('away_ot') is not none or q.get('home_ot') is not none %}
+    {% set show_leaders = leaders is not none %}
+    <text class="title" x="48" y="30">LATEST GAME</text>
+    <text class="date" x="350" y="30" text-anchor="end">{{game.game_date}}</text>
+
+    <text class="abbr" x="88" y="83" text-anchor="middle">{{game.away_team.abbreviation}}</text>
+    <text class="name" x="88" y="104" text-anchor="middle">{{game.away_team.name[:16]}}</text>
+
+    <text class="score" x="158" y="96" text-anchor="middle">{{game.away_team.score}}</text>
+    <text class="divider" x="190" y="94" text-anchor="middle">:</text>
+    <text class="score" x="222" y="96" text-anchor="middle">{{game.home_team.score}}</text>
+
+    <text class="abbr" x="292" y="83" text-anchor="middle">{{game.home_team.abbreviation}}</text>
+    <text class="name" x="292" y="104" text-anchor="middle">{{game.home_team.name[:16]}}</text>
+
+    {% if game.status == 'Final' %}
+    <rect x="169" y="112" width="42" height="18" rx="4" fill="#3fb950" opacity=".15"/>
+    <text class="badge win" x="190" y="125" text-anchor="middle">FINAL</text>
+    {% else %}
+    <rect x="169" y="112" width="42" height="18" rx="4" fill="#f85149" opacity=".15"/>
+    <text class="badge loss" x="190" y="125" text-anchor="middle">{{game.status}}</text>
+    {% endif %}
+
+    {% if has_q %}
+    {% set QS = 28 %}
+    {% set LABEL_W = 38 %}
+    {% set Q_COUNT = 6 if show_ot else 5 %}
+    {% set TABLE_W = LABEL_W + QS * Q_COUNT %}
+    {% set TX = 190 - TABLE_W // 2 %}
+    {% set QX = TX + LABEL_W + QS // 2 %}
+    {% for i in range(Q_COUNT) %}
+    <line class="grid" x1="{{TX + LABEL_W + QS * i}}" y1="145" x2="{{TX + LABEL_W + QS * i}}" y2="198"/>
+    {% endfor %}
+    <line class="grid" x1="{{TX}}" y1="163" x2="{{TX + TABLE_W}}" y2="163"/>
+    <line class="grid" x1="{{TX}}" y1="181" x2="{{TX + TABLE_W}}" y2="181"/>
+    <text class="qhead" x="{{QX}}" y="160" text-anchor="middle">Q1</text>
+    <text class="qhead" x="{{QX + QS}}" y="160" text-anchor="middle">Q2</text>
+    <text class="qhead" x="{{QX + QS * 2}}" y="160" text-anchor="middle">Q3</text>
+    <text class="qhead" x="{{QX + QS * 3}}" y="160" text-anchor="middle">Q4</text>
+    {% if show_ot %}<text class="qhead" x="{{QX + QS * 4}}" y="160" text-anchor="middle">OT</text>{% endif %}
+    <text class="qhead" x="{{TX + TABLE_W - QS // 2}}" y="160" text-anchor="middle">T</text>
+
+    <text class="qlabel" x="{{TX + LABEL_W - 8}}" y="178" text-anchor="end">{{game.away_team.abbreviation}}</text>
+    <text class="qcell" x="{{QX}}" y="178" text-anchor="middle">{{ q.get('away_q1') if q.get('away_q1') is not none else '' }}</text>
+    <text class="qcell" x="{{QX + QS}}" y="178" text-anchor="middle">{{ q.get('away_q2') if q.get('away_q2') is not none else '' }}</text>
+    <text class="qcell" x="{{QX + QS * 2}}" y="178" text-anchor="middle">{{ q.get('away_q3') if q.get('away_q3') is not none else '' }}</text>
+    <text class="qcell" x="{{QX + QS * 3}}" y="178" text-anchor="middle">{{ q.get('away_q4') if q.get('away_q4') is not none else '' }}</text>
+    {% if show_ot %}<text class="qcell" x="{{QX + QS * 4}}" y="178" text-anchor="middle">{{ q.get('away_ot') if q.get('away_ot') is not none else '' }}</text>{% endif %}
+    <text class="qtotal" x="{{TX + TABLE_W - QS // 2}}" y="178" text-anchor="middle">{{game.away_team.score}}</text>
+
+    <text class="qlabel" x="{{TX + LABEL_W - 8}}" y="196" text-anchor="end">{{game.home_team.abbreviation}}</text>
+    <text class="qcell" x="{{QX}}" y="196" text-anchor="middle">{{ q.get('home_q1') if q.get('home_q1') is not none else '' }}</text>
+    <text class="qcell" x="{{QX + QS}}" y="196" text-anchor="middle">{{ q.get('home_q2') if q.get('home_q2') is not none else '' }}</text>
+    <text class="qcell" x="{{QX + QS * 2}}" y="196" text-anchor="middle">{{ q.get('home_q3') if q.get('home_q3') is not none else '' }}</text>
+    <text class="qcell" x="{{QX + QS * 3}}" y="196" text-anchor="middle">{{ q.get('home_q4') if q.get('home_q4') is not none else '' }}</text>
+    {% if show_ot %}<text class="qcell" x="{{QX + QS * 4}}" y="196" text-anchor="middle">{{ q.get('home_ot') if q.get('home_ot') is not none else '' }}</text>{% endif %}
+    <text class="qtotal" x="{{TX + TABLE_W - QS // 2}}" y="196" text-anchor="middle">{{game.home_team.score}}</text>
+    {% endif %}
+
+    {% if show_leaders %}
+    {%- set away_abbr = game.away_team.abbreviation | upper -%}
+    {%- set home_abbr = game.home_team.abbreviation | upper -%}
+    {%- set away_l = leaders.get(away_abbr, {}) -%}
+    {%- set home_l = leaders.get(home_abbr, {}) -%}
+    {%- set BAR_MAX = 46 -%}
+    {%- set LY = 222 if has_q else 166 -%}
+    {% for cat in ['pts', 'ast', 'reb'] %}
+    {%- set av_raw = away_l.get(cat, {}).get('value') -%}
+    {%- set hv_raw = home_l.get(cat, {}).get('value') -%}
+    {%- set av = av_raw if av_raw is not none else 0 -%}
+    {%- set hv = hv_raw if hv_raw is not none else 0 -%}
+    {%- set maxv = [av, hv, 1] | max -%}
+    {%- set aw = av * BAR_MAX // maxv -%}
+    {%- set hw = hv * BAR_MAX // maxv -%}
+    {%- set Y = LY + loop.index0 * 17 -%}
+    <text class="leader-cat" x="190" y="{{Y}}" text-anchor="middle">{{ cat | upper }}</text>
+    <text class="leader-name" x="76" y="{{Y}}" text-anchor="end">{{ away_l.get(cat, {}).get('name', '')[:10] }}</text>
+    <rect x="{{132 - aw}}" y="{{Y - 9}}" width="{{aw}}" height="8" rx="2" fill="#8b949e" opacity=".42"/>
+    <text class="leader-value" x="154" y="{{Y}}" text-anchor="end" fill="#8b949e">{{ av_raw if av_raw is not none else '' }}</text>
+    <text class="leader-value accent" x="226" y="{{Y}}">{{ hv_raw if hv_raw is not none else '' }}</text>
+    <rect x="248" y="{{Y - 9}}" width="{{hw}}" height="8" rx="2" fill="#{{accent_color}}" opacity=".42"/>
+    <text class="leader-name" x="304" y="{{Y}}">{{ home_l.get(cat, {}).get('name', '')[:10] }}</text>
+    {% endfor %}
+    {% endif %}
+
+    <text class="footer" x="149" y="{{270 if show_leaders else (218 if has_q else 170)}}" text-anchor="end">Your team</text>
+    <text class="footer accent" x="157" y="{{270 if show_leaders else (218 if has_q else 170)}}">{{game.my_team}}</text>
+    <text class="footer" x="184" y="{{270 if show_leaders else (218 if has_q else 170)}}">-</text>
+    {% if game.result == 'W' %}
+    <text class="badge win" x="198" y="{{270 if show_leaders else (218 if has_q else 170)}}">WIN</text>
+    {% elif game.result == 'L' %}
+    <text class="badge loss" x="198" y="{{270 if show_leaders else (218 if has_q else 170)}}">LOSS</text>
+    {% else %}
+    <text class="badge accent" x="198" y="{{270 if show_leaders else (218 if has_q else 170)}}">{{game.status}}</text>
+    {% endif %}
+    {% else %}
+    <text class="title" x="48" y="30">NBA SCORE</text>
+    <text class="empty" x="190" y="104" text-anchor="middle">No recent games found</text>
+    {% endif %}
+  </g>
+</svg>
