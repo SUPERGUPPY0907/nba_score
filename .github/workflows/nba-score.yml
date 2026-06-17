@@ -7,6 +7,10 @@ on:
     - cron: '*/5 * * * *'
   workflow_dispatch:
 
+concurrency:
+  group: nba-score-card
+  cancel-in-progress: false
+
 jobs:
   update-card:
     runs-on: ubuntu-latest
@@ -37,5 +41,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add output/nba-score.svg
-          git diff --quiet --cached || git commit -m "Update NBA score card [skip ci]"
-          git push
+          if git diff --quiet --cached; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update NBA score card [skip ci]"
+            git pull --rebase origin main
+            git push
+          fi
